@@ -1,7 +1,11 @@
 {
-    "name": "ost-music-player-NL",
     "display_name": "OST Music-player",
-    "description": "Spotify 风格的悬浮自动切歌播放器，支持自定义备忘录批量导入歌单。",
+    "loading_order": 10,
+    "js": "index.js",
+    "css": "style.css",
+    "author": "NefeliaLeo-hue",
     "version": "1.0.0",
-    "author": "NefeliaLeo-hue"
+    "description": "Spotify 风格的悬浮自动切歌播放器，支持自定义备忘录批量导入歌单。",
+    "auto_update": true,
+    "homePage": "https://github.com/NefeliaLeo-hue/OST_music-player-from-NefeliaLeo"
 }
