@@ -1,6 +1,4 @@
-alert("OST TEST LOADED");
-
-console.log("[OST Player] JS FILE START");
+console.log("[OST TEST] index.js loaded");
 
 if (typeof jQuery === "undefined") {
     console.error("[OST Player] jQuery missing!");
