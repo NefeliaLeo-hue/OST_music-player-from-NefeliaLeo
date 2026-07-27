@@ -1,11 +1,10 @@
 jQuery(async function () {
-    // 1. 初始化本地歌单
     let savedLinks = localStorage.getItem('ost_custom_playlist');
     let playlist = savedLinks ? savedLinks.split('\n').filter(link => link.trim() !== '') : [];
     let currentIndex = 0;
     let audio = new Audio(playlist.length > 0 ? playlist[currentIndex] : "");
 
-    // 2. 注入极简悬浮窗
+    // 直接在悬浮窗上加回 ⚙️ 齿轮按钮，并附带完全独立的悬浮设置面板
     const playerHTML = `
     <div id="ost-player-container">
         <div class="ost-cover">🎵</div>
@@ -16,14 +15,29 @@ jQuery(async function () {
         <div class="ost-controls">
             <button class="ost-btn" id="ost-play-btn">▶️</button>
             <button class="ost-btn" id="ost-next-btn">⏭️</button>
+            <button class="ost-btn" id="ost-settings-btn">⚙️</button>
         </div>
     </div>
+
+    <div id="ost-floating-settings" style="display:none; position:fixed; top:130px; right:20px; width:260px; background:rgba(24,24,27,0.95); border:1px solid #3f3f46; border-radius:12px; padding:12px; box-shadow:0 8px 16px rgba(0,0,0,0.8); z-index:999999; backdrop-filter:blur(8px); font-family:system-ui, sans-serif; box-sizing:border-box;">
+        <div style="font-size:12px; color:#e4e4e7; font-weight:bold; margin-bottom:8px;">🎵 OST 专属播放器</div>
+        <div style="font-size:10px; color:#a1a1aa; margin-bottom:8px;">在此粘贴 Catbox 直链 (一行一首)：</div>
+        <textarea id="ost-links-input" style="width:100%; height:120px; background:#18181b; color:#a1a1aa; border:1px solid #3f3f46; border-radius:6px; padding:8px; font-size:10px; box-sizing:border-box; white-space:pre; outline:none;"></textarea>
+        <button id="ost-save-btn" style="margin-top:10px; width:100%; background:linear-gradient(135deg, #a855f7, #6366f1); border:none; color:white; padding:8px; border-radius:6px; cursor:pointer; font-weight:bold;">保存并应用</button>
+    </div>
     `;
+    
     $('body').append(playerHTML);
 
     const playBtn = $('#ost-play-btn');
     const nextBtn = $('#ost-next-btn');
+    const settingsBtn = $('#ost-settings-btn');
+    const settingsPanel = $('#ost-floating-settings');
+    const linksInput = $('#ost-links-input');
+    const saveBtn = $('#ost-save-btn');
     const trackNum = $('#ost-track-num');
+
+    if (savedLinks) { linksInput.val(savedLinks); }
 
     function updateTrackInfo() {
         if (playlist.length === 0) {
@@ -37,7 +51,8 @@ jQuery(async function () {
 
     playBtn.on('click', function() {
         if (playlist.length === 0) {
-            alert("请先去「扩展菜单」的 OST 面板里输入音乐链接！");
+            alert("请先点击 ⚙️ 齿轮按钮，输入音乐链接！");
+            settingsPanel.show();
             return;
         }
         if (audio.paused) {
@@ -59,14 +74,14 @@ jQuery(async function () {
         updateTrackInfo();
     });
 
-    audio.addEventListener('ended', function() {
-        nextBtn.click();
+    audio.addEventListener('ended', function() { nextBtn.click(); });
+
+    settingsBtn.on('click', function() {
+        settingsPanel.toggle();
     });
 
-    // 3. 监听酒馆原生菜单里的操作
-    // 使用事件委托，确保哪怕酒馆菜单重新渲染也能捕捉到点击
-    $(document).on('click', '#ost-save-btn', function() {
-        const newLinks = $('#ost-links-input').val();
+    saveBtn.on('click', function() {
+        const newLinks = linksInput.val();
         localStorage.setItem('ost_custom_playlist', newLinks);
         playlist = newLinks.split('\n').filter(link => link.trim() !== '');
         
@@ -76,21 +91,7 @@ jQuery(async function () {
             audio.pause();
             playBtn.text('▶️');
             updateTrackInfo();
-            alert("✅ 歌单保存成功！");
-        } else {
-            audio.pause();
-            audio.src = "";
-            updateTrackInfo();
-        }
-    });
-
-    // 4. 等待酒馆 UI 渲染完毕后，把已有的歌单填入菜单的输入框
-    setTimeout(() => {
-        if (savedLinks) {
-            $('#ost-links-input').val(savedLinks);
-        }
-    }, 1500);
-});
+            settingsPanel.hide();
             alert("✅ 歌单保存成功！");
         } else {
             audio.pause();
@@ -100,4 +101,3 @@ jQuery(async function () {
         }
     });
 });
-
