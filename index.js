@@ -123,7 +123,7 @@ console.log("[OST Player] INIT START");
     </div>
     `;
     
-    $('#sheld').append(playerHTML);
+    $('body').append(playerHTML);
 
     const playBtn = $('#ost-play-btn');
     const nextBtn = $('#ost-next-btn');
@@ -203,15 +203,6 @@ audio.addEventListener(
         "false"
     );
     playBtn.text("▶️");
-
-        } else {
-            audio.pause();
-localStorage.setItem(
-    "ost_playing",
-    "false"
-);
-playBtn.text("▶️");
-        }
     });
 
     nextBtn.on('click', function() {
