@@ -1,4 +1,5 @@
 jQuery(async function () {
+    console.log("OST Music Player loaded");
     let savedLinks = localStorage.getItem('ost_custom_playlist');
     let playlist = savedLinks ? savedLinks.split('\n').filter(link => link.trim() !== '') : [];
     let currentIndex = 0;
@@ -27,7 +28,7 @@ jQuery(async function () {
     </div>
     `;
     
-    $('body').append(playerHTML);
+    $('#sheld').append(playerHTML);
 
     const playBtn = $('#ost-play-btn');
     const nextBtn = $('#ost-next-btn');
