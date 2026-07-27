@@ -2,6 +2,6 @@
     "name": "ost Music-player NL",
     "display_name": "OST Music-player",
     "description": "Spotify 风格的悬浮自动切歌播放器，支持自定义备忘录批量导入歌单。",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "author": "NefeliaLeo-hue"
 }
