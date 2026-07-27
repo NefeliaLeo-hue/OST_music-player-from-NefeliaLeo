@@ -1,3 +1,5 @@
+alert("OST TEST LOADED");
+
 console.log("[OST Player] JS FILE START");
 
 if (typeof jQuery === "undefined") {
