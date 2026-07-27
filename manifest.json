@@ -4,7 +4,7 @@
     "js": "index.js",
     "css": "style.css",
     "author": "NefeliaLeo-hue",
-    "version": "1.0.4",
+    "version": "1.0.4.1",
     "description": "Spotify 风格的悬浮自动切歌播放器",
     "homePage": "https://github.com/NefeliaLeo-hue/ost-music-player-NL"
 }
