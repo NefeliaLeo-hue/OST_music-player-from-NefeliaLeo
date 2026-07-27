@@ -1,7 +1,7 @@
 {
-    "name": "OST Music Player",
-    "description": "Spotify 风格的悬浮自动切歌播放器",
-    "version": "1.0.0",
-    "author": "Creator"
+    "name": "ost Music-player NL",
+    "display_name": "OST Music-player",
+    "description": "Spotify 风格的悬浮自动切歌播放器，支持自定义备忘录批量导入歌单。",
+    "version": "1.0.1",
+    "author": "NefeliaLeo-hue"
 }
-
