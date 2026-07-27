@@ -1,0 +1,65 @@
+#ost-player-container {
+    position: fixed;
+    top: 65px;
+    right: 20px;
+    width: 260px;
+    background: rgba(24, 24, 27, 0.95);
+    border: 1px solid #3f3f46;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    z-index: 99999;
+    backdrop-filter: blur(8px);
+    font-family: system-ui, sans-serif;
+    color: #e4e4e7;
+    transition: all 0.3s ease;
+}
+.ost-cover {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    box-shadow: 0 0 10px rgba(168,85,247,0.4);
+}
+.ost-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ost-title {
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.ost-subtitle {
+    font-size: 11px;
+    color: #a1a1aa;
+}
+.ost-controls {
+    display: flex;
+    gap: 8px;
+}
+.ost-btn {
+    background: none;
+    border: none;
+    color: #e4e4e7;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+.ost-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
