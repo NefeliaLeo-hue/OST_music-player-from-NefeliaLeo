@@ -193,6 +193,7 @@ audio.addEventListener(
             err
         );
         playBtn.text("▶️");
+      }
     });
 
 } else {
