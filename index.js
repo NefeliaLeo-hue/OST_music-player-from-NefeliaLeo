@@ -1,10 +1,79 @@
-jQuery(async function () {
-    console.log("OST Music Player loaded");
-    let savedLinks = localStorage.getItem('ost_custom_playlist');
-    let playlist = savedLinks ? savedLinks.split('\n').filter(link => link.trim() !== '') : [];
-    let currentIndex = 0;
-    let audio = new Audio(playlist.length > 0 ? playlist[currentIndex] : "");
+console.log("[OST Player] Loading...");
 
+jQuery(async function () {
+    // 防止重复加载
+    if ($("#ost-player-container").length) {
+        console.log("[OST Player] Already loaded");
+        return;
+    }
+    console.log("[OST Player] Initialized");
+
+    // =====================
+    // 数据读取
+    // =====================
+
+    let savedLinks =
+        localStorage.getItem(
+            "ost_custom_playlist"
+        );
+    let playlist =
+        savedLinks
+        ?
+        savedLinks
+        .split("\n")
+        .filter(
+            link => link.trim() !== ""
+        )
+        :
+        [];
+    let currentIndex =
+        Number(
+            localStorage.getItem(
+                "ost_current_index"
+            )
+        )
+        ||
+        0;
+    let audio =
+        new Audio(
+            playlist.length
+            ?
+            playlist[currentIndex]
+            :
+            ""
+        );
+
+    // 音量记忆
+
+    audio.volume =
+        Number(
+            localStorage.getItem(
+                "ost_volume"
+            )
+        )
+        ||
+        0.5;
+
+    // =====================
+    // 恢复播放状态
+    // =====================
+
+    let wasPlaying =
+        localStorage.getItem(
+            "ost_playing"
+        )
+        ===
+        "true";
+    audio.addEventListener(
+        "volumechange",
+        ()=>{
+            localStorage.setItem(
+                "ost_volume",
+                audio.volume
+            );
+        }
+    );
+    
     // 直接在悬浮窗上加回 ⚙️ 齿轮按钮，并附带完全独立的悬浮设置面板
     const playerHTML = `
     <div id="ost-player-container">
@@ -21,7 +90,7 @@ jQuery(async function () {
     </div>
 
     <div id="ost-floating-settings" style="display:none; position:fixed; top:130px; right:20px; width:260px; background:rgba(24,24,27,0.95); border:1px solid #3f3f46; border-radius:12px; padding:12px; box-shadow:0 8px 16px rgba(0,0,0,0.8); z-index:999999; backdrop-filter:blur(8px); font-family:system-ui, sans-serif; box-sizing:border-box;">
-        <div style="font-size:12px; color:#e4e4e7; font-weight:bold; margin-bottom:8px;">🎵 OST 专属播放器</div>
+        <div style="font-size:12px; color:#e4e4e7; font-weight:bold; margin-bottom:8px;">🎵 OST 播放器</div>
         <div style="font-size:10px; color:#a1a1aa; margin-bottom:8px;">在此粘贴 Catbox 直链 (一行一首)：</div>
         <textarea id="ost-links-input" style="width:100%; height:120px; background:#18181b; color:#a1a1aa; border:1px solid #3f3f46; border-radius:6px; padding:8px; font-size:10px; box-sizing:border-box; white-space:pre; outline:none;"></textarea>
         <button id="ost-save-btn" style="margin-top:10px; width:100%; background:linear-gradient(135deg, #a855f7, #6366f1); border:none; color:white; padding:8px; border-radius:6px; cursor:pointer; font-weight:bold;">保存并应用</button>
@@ -58,10 +127,18 @@ jQuery(async function () {
         }
         if (audio.paused) {
             audio.play();
-            playBtn.text('⏸️');
+localStorage.setItem(
+    "ost_playing",
+    "true"
+);
+playBtn.text("⏸️");
         } else {
             audio.pause();
-            playBtn.text('▶️');
+localStorage.setItem(
+    "ost_playing",
+    "false"
+);
+playBtn.text("▶️");
         }
     });
 
@@ -69,6 +146,11 @@ jQuery(async function () {
         if (playlist.length === 0) return;
         audio.pause();
         currentIndex = (currentIndex + 1) % playlist.length;
+        
+        localStorage.setItem(
+    "ost_current_index",
+    currentIndex
+);
         audio.src = playlist[currentIndex];
         audio.play();
         playBtn.text('⏸️');
@@ -88,6 +170,11 @@ jQuery(async function () {
         
         if (playlist.length > 0) {
             currentIndex = 0;
+
+            localStorage.setItem(
+    "ost_current_index",
+    0
+);
             audio.src = playlist[currentIndex];
             audio.pause();
             playBtn.text('▶️');
@@ -102,3 +189,19 @@ jQuery(async function () {
         }
     });
 });
+
+if(
+    wasPlaying
+    &&
+    playlist.length > 0
+){
+    audio.play()
+    .then(()=>{
+        playBtn.text("⏸️");
+    })
+    .catch(()=>{
+        console.log(
+        "[OST Player] Browser blocked autoplay"
+        );
+    });
+}
