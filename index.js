@@ -193,7 +193,7 @@ audio.addEventListener(
             err
         );
         playBtn.text("▶️");
-      }
+        
     });
 
 } else {
@@ -204,6 +204,7 @@ audio.addEventListener(
         "false"
     );
     playBtn.text("▶️");
+        }
     });
 
     nextBtn.on('click', function() {
