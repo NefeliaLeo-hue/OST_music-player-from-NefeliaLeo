@@ -1,6 +1,14 @@
-console.log("[OST Player] Loading...");
+console.log("[OST Player] JS FILE START");
+
+if (typeof jQuery === "undefined") {
+    console.error("[OST Player] jQuery missing!");
+}
+else {console.log("[OST Player] jQuery OK");
+}
 
 jQuery(async function () {
+console.log("[OST Player] INIT START");
+    
     // 防止重复加载
     if ($("#ost-player-container").length) {
         console.log("[OST Player] Already loaded");
