@@ -42,7 +42,25 @@ jQuery(async function () {
             :
             ""
         );
-
+    audio.addEventListener(
+    "loadedmetadata",
+    ()=>{
+        console.log(
+            "歌曲长度:",
+            audio.duration
+        );
+    }
+);
+    audio.addEventListener(
+    "error",
+    ()=>{
+        console.log(
+            "[OST Player] 音频错误:",
+            audio.error
+        );
+    }
+);
+    
     // 音量记忆
 
     audio.volume =
@@ -65,14 +83,14 @@ jQuery(async function () {
         ===
         "true";
     audio.addEventListener(
-        "volumechange",
-        ()=>{
-            localStorage.setItem(
-                "ost_volume",
-                audio.volume
-            );
-        }
-    );
+    "volumechange",
+    ()=>{
+        localStorage.setItem(
+            "ost_volume",
+            audio.volume
+        );
+    }
+);
     
     // 直接在悬浮窗上加回 ⚙️ 齿轮按钮，并附带完全独立的悬浮设置面板
     const playerHTML = `
@@ -107,6 +125,33 @@ jQuery(async function () {
     const saveBtn = $('#ost-save-btn');
     const trackNum = $('#ost-track-num');
 
+    // =====================
+    // 播放卡死保护
+    // =====================
+
+let playTimer = null;
+
+audio.addEventListener(
+    "playing",
+    ()=>{
+        clearTimeout(playTimer);
+    }
+);
+audio.addEventListener(
+    "waiting",
+    ()=>{
+        clearTimeout(playTimer);
+
+        playTimer = setTimeout(()=>{
+            console.log(
+                "[OST Player] 音乐加载超时，自动跳过"
+            );
+            nextBtn.click();
+        },20000);
+    }
+);
+    
+
     if (savedLinks) { linksInput.val(savedLinks); }
 
     function updateTrackInfo() {
@@ -126,12 +171,31 @@ jQuery(async function () {
             return;
         }
         if (audio.paused) {
-            audio.play();
-localStorage.setItem(
-    "ost_playing",
-    "true"
-);
-playBtn.text("⏸️");
+    audio.play()
+    .then(()=>{
+        localStorage.setItem(
+            "ost_playing",
+            "true"
+        );
+        playBtn.text("⏸️");
+    })
+    .catch((err)=>{
+        console.log(
+            "[OST Player] 播放失败:",
+            err
+        );
+        playBtn.text("▶️");
+    });
+
+} else {
+
+    audio.pause();
+    localStorage.setItem(
+        "ost_playing",
+        "false"
+    );
+    playBtn.text("▶️");
+
         } else {
             audio.pause();
 localStorage.setItem(
@@ -158,6 +222,22 @@ playBtn.text("▶️");
     });
 
     audio.addEventListener('ended', function() { nextBtn.click(); });
+
+    // 恢复播放
+
+if(wasPlaying
+    &&
+    playlist.length > 0
+){audio.play()
+    .then(()=>{
+        playBtn.text("⏸️");
+    })
+    .catch(()=>{
+        console.log(
+        "[OST Player] 自动播放被浏览器阻止"
+        );
+    });
+}
 
     settingsBtn.on('click', function() {
         settingsPanel.toggle();
@@ -189,19 +269,3 @@ playBtn.text("▶️");
         }
     });
 });
-
-if(
-    wasPlaying
-    &&
-    playlist.length > 0
-){
-    audio.play()
-    .then(()=>{
-        playBtn.text("⏸️");
-    })
-    .catch(()=>{
-        console.log(
-        "[OST Player] Browser blocked autoplay"
-        );
-    });
-}
