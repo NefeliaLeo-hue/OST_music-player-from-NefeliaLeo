@@ -112,6 +112,7 @@ console.log("[OST Player] INIT START");
             <button class="ost-btn" id="ost-play-btn">▶️</button>
             <button class="ost-btn" id="ost-next-btn">⏭️</button>
             <button class="ost-btn" id="ost-settings-btn">⚙️</button>
+            <button class="ost-btn" id="ost-min-btn">🔽</button>
         </div>
     </div>
 
