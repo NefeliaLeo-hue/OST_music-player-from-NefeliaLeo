@@ -132,7 +132,87 @@ console.log("[OST Player] INIT START");
     const linksInput = $('#ost-links-input');
     const saveBtn = $('#ost-save-btn');
     const trackNum = $('#ost-track-num');
+    
 
+    // =====================
+    // 拖拽与最小化逻辑 (PC + 移动端全兼容版)
+    // =====================
+    
+    const playerDOM = document.getElementById('ost-player-container');
+    let isDragging = false;
+    let isMoved = false; 
+    let startX, startY, initialX, initialY;
+
+    // 1. 按下/触摸屏幕：准备拖拽 (用 pointerdown 代替 mousedown)
+    playerDOM.addEventListener('pointerdown', (e) => {
+        // 如果点的是按钮，不触发拖拽
+        if (e.target.closest('button')) return;
+
+        isDragging = true;
+        isMoved = false; 
+        
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = playerDOM.getBoundingClientRect();
+        initialX = rect.left;
+        initialY = rect.top;
+
+        playerDOM.style.right = 'auto'; 
+        playerDOM.style.left = initialX + 'px';
+        playerDOM.style.top = initialY + 'px';
+        playerDOM.style.transition = 'none'; 
+        
+        // 【关键】锁定指针：即使手指滑出元素范围，依然能捕捉到滑动事件
+        playerDOM.setPointerCapture(e.pointerId);
+    });
+
+    // 2. 移动/滑动手指：执行拖拽 (用 pointermove 代替 mousemove)
+    playerDOM.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            isMoved = true;
+        }
+
+        playerDOM.style.left = (initialX + dx) + 'px';
+        playerDOM.style.top = (initialY + dy) + 'px';
+    });
+
+    // 3. 结束拖拽逻辑
+    const endDrag = (e) => {
+        if (isDragging) {
+            isDragging = false;
+            playerDOM.style.transition = 'width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, padding 0.3s ease';
+            // 释放指针锁定
+            playerDOM.releasePointerCapture(e.pointerId);
+        }
+    };
+
+    // 鼠标松开/手指抬起/系统打断 (用 pointerup 和 pointercancel)
+    playerDOM.addEventListener('pointerup', endDrag);
+    playerDOM.addEventListener('pointercancel', endDrag);
+
+    // =====================
+    // 缩放点击逻辑 (保持不变)
+    // =====================
+    
+    $('#ost-min-btn').on('click', function(e) {
+        e.stopPropagation(); 
+        $('#ost-player-container').addClass('minimized');
+    });
+
+    $('#ost-player-container').on('click', function(e) {
+        if ($(this).hasClass('minimized') && !isMoved) {
+            $(this).removeClass('minimized');
+        }
+    });
+
+
+    
     // =====================
     // 播放卡死保护
     // =====================
