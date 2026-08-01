@@ -16,6 +16,12 @@
     font-family: system-ui, sans-serif;
     color: #e4e4e7;
     transition: all 0.3s ease;
+    
+cursor: grab;
+    user-select: none;
+    transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, padding 0.3s ease, background 0.3s ease;
+    
+    touch-action: none; 
 }
 .ost-cover {
     width: 40px;
